@@ -100,13 +100,13 @@ export default function App() {
   };
 
   const galleryImages = [
-    { src: "https://i.imgur.com/4UUoYsE.png", alt: "Escova Elétrica de Limpeza Giratória 9 em 1 Sem Fio" },
-    { src: "https://i.imgur.com/Yev2huR.jpg", alt: "Escova Elétrica 9 em 1 - Detalhes e Ponteiras" },
-    { src: "https://i.imgur.com/A1riuTl.jpg", alt: "Escova Elétrica 9 em 1 - Uso Prático" },
-    { src: "https://i.imgur.com/46CsjD5.jpg", alt: "Escova Elétrica 9 em 1 - Cabo Extensor e Alcance" },
-    { src: "https://i.imgur.com/35qj9TA.jpg", alt: "Escova Elétrica 9 em 1 - Ponteiras Intercambiáveis" },
-    { src: "https://i.imgur.com/7Lo7dAo.jpg", alt: "Escova Elétrica 9 em 1 - Limpeza Pesada Sem Esforço" },
-    { src: "https://i.imgur.com/9VQSfet.jpg", alt: "Escova Elétrica 9 em 1 - Kit Completo" }
+    { src: "/images/p1.webp", thumb: "/images/t1.webp", alt: "Escova Elétrica de Limpeza Giratória 9 em 1 Sem Fio" },
+    { src: "/images/p2.webp", thumb: "/images/t2.webp", alt: "Escova Elétrica 9 em 1 - Detalhes e Ponteiras" },
+    { src: "/images/p3.webp", thumb: "/images/t3.webp", alt: "Escova Elétrica 9 em 1 - Uso Prático" },
+    { src: "/images/p4.webp", thumb: "/images/t4.webp", alt: "Escova Elétrica 9 em 1 - Cabo Extensor e Alcance" },
+    { src: "/images/p5.webp", thumb: "/images/t5.webp", alt: "Escova Elétrica 9 em 1 - Ponteiras Intercambiáveis" },
+    { src: "/images/p6.webp", thumb: "/images/t6.webp", alt: "Escova Elétrica 9 em 1 - Limpeza Pesada Sem Esforço" },
+    { src: "/images/p7.webp", thumb: "/images/t7.webp", alt: "Escova Elétrica 9 em 1 - Kit Completo" }
   ];
 
   const reviews: CustomerReview[] = [
@@ -118,9 +118,9 @@ export default function App() {
       verified: true,
       text: "Gente, por R$ 28,97 achei que fosse fraquinha, mas me surpreendeu demais! Limpou o rejunte encardido do meu banheiro em 5 minutos sem eu ter que ficar abaixada.",
       photos: [
-        "https://i.imgur.com/vOkgnMs.jpg",
-        "https://i.imgur.com/8cUBNTz.jpg",
-        "https://i.imgur.com/YtYyOyc.jpg"
+        "/images/r1.webp",
+        "/images/r2.webp",
+        "/images/r3.webp"
       ]
     },
     {
@@ -131,8 +131,8 @@ export default function App() {
       verified: true,
       text: "Comprei pra minha mãe por causa da dor nas costas e agora até eu uso aqui em casa. O cabo extensor ajuda muito e a bateria dura bastante.",
       photos: [
-        "https://i.imgur.com/3Owm2S9.jpg",
-        "https://i.imgur.com/4CBf88w.jpg"
+        "/images/r4.webp",
+        "/images/r5.webp"
       ]
     },
     {
@@ -143,7 +143,7 @@ export default function App() {
       verified: true,
       text: "Chegou bem rápido aqui em Minas, tudo certinho com as 9 escovinhas. A pontuda tira toda aquela sujeira chata do trilho da janela e da torneira.",
       photos: [
-        "https://i.imgur.com/hKw6x2y.jpg"
+        "/images/r6.webp"
       ]
     },
     {
@@ -154,8 +154,8 @@ export default function App() {
       verified: true,
       text: "Melhor comprinha que fiz pro apê! O vidro do box ficou transparente de novo sem eu precisar ficar esfregando com força.",
       photos: [
-        "https://i.imgur.com/A2fCsdU.jpg",
-        "https://i.imgur.com/CDG9Ryb.jpg"
+        "/images/r7.webp",
+        "/images/r8.webp"
       ]
     },
     {
@@ -166,7 +166,7 @@ export default function App() {
       verified: true,
       text: "Tem duas velocidades e não trava quando você aperta no piso. Já usei no banheiro, no fogão e até nas rodas do carro. Vale muito!",
       photos: [
-        "https://i.imgur.com/OmvYKXz.jpg"
+        "/images/r9.webp"
       ]
     },
     {
@@ -280,17 +280,24 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Pré-carrega todas as fotos da galeria e avaliações imediatamente e aquece o link de checkout
-    const urlsToPreload = [
-      ...galleryImages.map((item) => item.src),
-      ...reviews.flatMap((r) => r.photos || [])
-    ];
-    urlsToPreload.forEach((src) => {
+    warmCheckout();
+
+    // Primeiro garante as fotos da galeria em memória; miniaturas das avaliações carregam logo após em segundo plano
+    galleryImages.slice(1).forEach((item) => {
       const img = new Image();
       img.decoding = 'async';
-      img.src = src;
+      img.src = item.src;
     });
-    warmCheckout();
+
+    const timer = window.setTimeout(() => {
+      reviews.flatMap((r) => r.photos || []).forEach((src) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src.replace('/images/r', '/images/rt');
+      });
+    }, 150);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -568,9 +575,8 @@ export default function App() {
                           className="w-full h-full object-contain select-none transition-transform duration-150 scale-100 md:group-hover:scale-105"
                           draggable={false}
                           loading="eager"
-                          decoding="async"
-                          fetchPriority={idx === 0 ? 'high' : 'auto'}
-                          referrerPolicy="no-referrer"
+                          decoding={idx === 0 ? 'sync' : 'async'}
+                          fetchPriority={idx === 0 ? 'high' : 'low'}
                           src={img.src}
                         />
                       </div>
@@ -631,8 +637,7 @@ export default function App() {
                           className="w-full h-full object-cover rounded-sm"
                           loading="eager"
                           decoding="async"
-                          referrerPolicy="no-referrer"
-                          src={img.src}
+                          src={img.thumb}
                         />
                       </button>
                     );
@@ -1098,30 +1103,27 @@ export default function App() {
                         <img
                           alt="Escova Elétrica 9 em 1 - Detalhes do Produto"
                           className="w-full h-auto object-cover rounded-lg block"
-                          loading="eager"
+                          loading="lazy"
                           decoding="async"
-                          referrerPolicy="no-referrer"
-                          src="https://i.imgur.com/Yev2huR.jpg"
+                          src="/images/p2.webp"
                         />
                       </div>
                       <div className="rounded-lg overflow-hidden border border-neutral-200 shadow-2xs">
                         <img
                           alt="Escova Elétrica 9 em 1 - Uso Prático"
                           className="w-full h-auto object-cover rounded-lg block"
-                          loading="eager"
+                          loading="lazy"
                           decoding="async"
-                          referrerPolicy="no-referrer"
-                          src="https://i.imgur.com/A1riuTl.jpg"
+                          src="/images/p3.webp"
                         />
                       </div>
                       <div className="rounded-lg overflow-hidden border border-neutral-200 shadow-2xs">
                         <img
                           alt="Escova Elétrica 9 em 1 - Cabo Extensor e Ponteiras"
                           className="w-full h-auto object-cover rounded-lg block"
-                          loading="eager"
+                          loading="lazy"
                           decoding="async"
-                          referrerPolicy="no-referrer"
-                          src="https://i.imgur.com/46CsjD5.jpg"
+                          src="/images/p4.webp"
                         />
                       </div>
                     </div>
@@ -1300,12 +1302,11 @@ export default function App() {
                                     className="w-14 h-14 rounded-md overflow-hidden border border-neutral-200 flex-shrink-0 cursor-zoom-in hover:border-neutral-900 transition-all bg-neutral-50"
                                   >
                                     <img
-                                      src={p}
+                                      src={p.replace('/images/r', '/images/rt')}
                                       alt={`Foto enviada por ${rev.name}`}
                                       className="w-full h-full object-cover"
-                                      loading="eager"
+                                      loading="lazy"
                                       decoding="async"
-                                      referrerPolicy="no-referrer"
                                     />
                                   </button>
                                 ))}
@@ -1599,12 +1600,11 @@ export default function App() {
           <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2.5 sm:gap-4 max-w-5xl">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
               <img
-                src="https://i.imgur.com/4UUoYsE.png"
+                src="/images/t1.webp"
                 alt="Escova Elétrica 9 em 1"
                 loading="eager"
                 decoding="async"
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain bg-neutral-50 rounded-lg border border-neutral-200 p-0.5 shrink-0"
-                referrerPolicy="no-referrer"
               />
               <div className="flex flex-col justify-center min-w-0">
                 <span className="font-bold text-[11px] sm:text-sm text-neutral-900 truncate leading-tight">
@@ -1689,12 +1689,11 @@ export default function App() {
             ) : (
               <div className="py-3 flex gap-3 items-center">
                 <img
-                  src="https://i.imgur.com/4UUoYsE.png"
+                  src="/images/t1.webp"
                   alt="Escova Elétrica 9 em 1"
                   loading="eager"
                   decoding="async"
                   className="w-16 h-16 object-cover border border-neutral-200 rounded"
-                  referrerPolicy="no-referrer"
                 />
                 <div className="flex-1">
                   <h4 className="text-xs font-bold text-neutral-900 leading-tight">
