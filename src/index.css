@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@keyframes pulse-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+.animate-shimmer-fast {
+  animation: pulse-shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes bf-marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-bf-marquee {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: bf-marquee 18s linear infinite;
+}
+
+@keyframes fade-in-fast {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes zoom-in-fast {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in-fast {
+  animation: fade-in-fast 0.14s ease-out both;
+}
+
+.animate-zoom-in-fast {
+  animation: zoom-in-fast 0.16s ease-out both;
+}
+
+@theme {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --color-brand-accent: #009846;
+  --color-brand-support: #FFFFFF;
+  --color-brand-dark: #111827;
+}
+
+@layer base {
+  html, body {
+    @apply bg-brand-support text-gray-900 antialiased;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Previne zoom automático e salto/deslocamento de tela no celular ao focar em inputs */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+    touch-action: manipulation;
+  }
+}
+
+/* Custom scrollbar for review images */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 4px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}

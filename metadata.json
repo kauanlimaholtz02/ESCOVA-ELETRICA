@@ -1,0 +1,6 @@
+{
+  "name": "Prime Store - Kit Vonixx Completo para Lavagem Automotiva",
+  "description": "Loja oficial Prime Store com Kit Vonixx Completo para Lavagem e Brilho Automotivo.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
