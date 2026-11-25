@@ -34,9 +34,10 @@ import {
   Check,
   CheckCircle2,
   Zap,
-  BatteryCharging,
   Droplets,
-  Gauge
+  Gauge,
+  Snowflake,
+  Plug
 } from 'lucide-react';
 import { CustomerReview } from './types';
 
@@ -85,151 +86,136 @@ export default function App() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSent, setNewsletterSent] = useState(false);
+  const [isVoltageModalOpen, setIsVoltageModalOpen] = useState(false);
+  const [selectedVoltage, setSelectedVoltage] = useState<'110V' | '220V' | null>(null);
+  const [voltageError, setVoltageError] = useState(false);
 
   const productData = {
-    name: "Escova Elétrica de Limpeza Giratória 9 em 1 Sem Fio",
+    name: "Máquina de Gelo Turbo Ice Premium Mondial",
     brand: "PRIME STORE",
-    subtitle: "Cabo Extensor Telescópico + 9 Ponteiras Intercambiáveis + Visor Digital LED + USB-C",
-    price: "28,97",
-    oldPrice: "89,90",
-    savings: "60,93",
-    discountBadge: "68% OFF",
+    subtitle: "Modelo MG-12-GI • Até 12 kg/dia • Gelo em 8 min • Reservatório 1,3L • 110V ou 220V",
+    price: "84,59",
+    oldPrice: "298,99",
+    savings: "214,40",
+    discountBadge: "72% OFF",
     rating: "4.9",
-    reviewsCount: "486",
-    checkoutUrl: "https://pay.primestoreshop.site/6aff2d7b5b33a1b1a836c225"
+    reviewsCount: "612",
+    checkoutUrl110: "https://pay.primestoreshop.site/6b05e46d5b33a1b1a840db90",
+    checkoutUrl220: "https://pay.primestoreshop.site/6b0607a35b33a1b1a8411e0d"
   };
 
   const galleryImages = [
-    { src: "/images/p1.webp", thumb: "/images/t1.webp", alt: "Escova Elétrica de Limpeza Giratória 9 em 1 Sem Fio" },
-    { src: "/images/p2.webp", thumb: "/images/t2.webp", alt: "Escova Elétrica 9 em 1 - Detalhes e Ponteiras" },
-    { src: "/images/p3.webp", thumb: "/images/t3.webp", alt: "Escova Elétrica 9 em 1 - Uso Prático" },
-    { src: "/images/p4.webp", thumb: "/images/t4.webp", alt: "Escova Elétrica 9 em 1 - Cabo Extensor e Alcance" },
-    { src: "/images/p5.webp", thumb: "/images/t5.webp", alt: "Escova Elétrica 9 em 1 - Ponteiras Intercambiáveis" },
-    { src: "/images/p6.webp", thumb: "/images/t6.webp", alt: "Escova Elétrica 9 em 1 - Limpeza Pesada Sem Esforço" },
-    { src: "/images/p7.webp", thumb: "/images/t7.webp", alt: "Escova Elétrica 9 em 1 - Kit Completo" }
+    { src: "/images/ice1.webp", thumb: "/images/icet1.webp", alt: "Máquina de Gelo Turbo Ice Premium Mondial MG-12-GI" },
+    { src: "/images/ice2.webp", thumb: "/images/icet2.webp", alt: "Máquina de Gelo Mondial - Foto 2" },
+    { src: "/images/ice3.webp", thumb: "/images/icet3.webp", alt: "Máquina de Gelo Mondial - Foto 3" },
+    { src: "/images/ice4.webp", thumb: "/images/icet4.webp", alt: "Máquina de Gelo Mondial - Foto 4" },
+    { src: "/images/ice5.webp", thumb: "/images/icet5.webp", alt: "Máquina de Gelo Mondial - Foto 5" },
+    { src: "/images/ice6.webp", thumb: "/images/icet6.webp", alt: "Máquina de Gelo Mondial - Foto 6" },
+    { src: "/images/ice7.webp", thumb: "/images/icet7.webp", alt: "Máquina de Gelo Mondial - Foto 7" }
   ];
 
   const reviews: CustomerReview[] = [
     {
       id: 1,
-      name: "Camila Ferreira",
+      name: "Marcelo Henrique",
       date: "Há 1 dia",
       rating: 5,
       verified: true,
-      text: "Gente, por R$ 28,97 achei que fosse fraquinha, mas me surpreendeu demais! Limpou o rejunte encardido do meu banheiro em 5 minutos sem eu ter que ficar abaixada.",
+      text: "Fiz churrasco domingo aqui em casa e não faltou gelo hora nenhuma. Em menos de 10 minutos já cai a primeira leva de cubinhos, sensacional pelo preço!",
       photos: [
-        "/images/r1.webp",
-        "/images/r2.webp",
-        "/images/r3.webp"
+        "/images/rev1.webp",
+        "/images/rev2.webp",
+        "/images/rev3.webp"
       ]
     },
     {
       id: 2,
-      name: "Marcos Vinícius",
+      name: "Camila Nogueira",
       date: "Há 2 dias",
       rating: 5,
       verified: true,
-      text: "Comprei pra minha mãe por causa da dor nas costas e agora até eu uso aqui em casa. O cabo extensor ajuda muito e a bateria dura bastante.",
+      avatar: "/images/avatar2.webp",
+      text: "Amei demais! Não precisa de encanamento nenhum, só coloquei na bancada da cozinha, enchi de água e liguei. O visor transparente é super prático.",
       photos: [
-        "/images/r4.webp",
-        "/images/r5.webp"
+        "/images/rev4.webp"
       ]
     },
     {
       id: 3,
-      name: "Renata Almeida",
-      date: "Há 4 dias",
+      name: "Thiago Barbosa",
+      date: "Há 3 dias",
       rating: 5,
       verified: true,
-      text: "Chegou bem rápido aqui em Minas, tudo certinho com as 9 escovinhas. A pontuda tira toda aquela sujeira chata do trilho da janela e da torneira.",
+      avatar: "/images/avatar3.webp",
+      text: "Peguei a 110V por R$ 84,59 na promoção e chegou tudo lacrado com cesto e pazinha. O inox não fica cheio de marca de dedo, acabamento top.",
       photos: [
-        "/images/r6.webp"
+        "/images/rev5.webp",
+        "/images/rev6.webp"
       ]
     },
     {
       id: 4,
-      name: "Juliana Santos",
+      name: "Fernanda Silveira",
       date: "Há 5 dias",
       rating: 5,
       verified: true,
-      text: "Melhor comprinha que fiz pro apê! O vidro do box ficou transparente de novo sem eu precisar ficar esfregando com força.",
+      text: "Antes eu vivia esquecendo de encher forminha de gelo kkk. Agora todo dia tem gelo fresquinho pro meu suco e pros drinks no fim de semana.",
       photos: [
-        "/images/r7.webp",
-        "/images/r8.webp"
+        "/images/rev7.webp"
       ]
     },
     {
       id: 5,
-      name: "Rafael Teixeira",
+      name: "Rodrigo Santana",
       date: "Há 1 semana",
       rating: 5,
       verified: true,
-      text: "Tem duas velocidades e não trava quando você aperta no piso. Já usei no banheiro, no fogão e até nas rodas do carro. Vale muito!",
-      photos: [
-        "/images/r9.webp"
-      ]
+      text: "Muito silenciosa e rápida. Escolho o cubo maior pros copos térmicos e o menor pra suco. O painel avisa certinho quando precisa de água.",
+      photos: []
     },
     {
       id: 6,
-      name: "Débora Oliveira",
+      name: "Patrícia Gomes",
       date: "Há 1 semana",
       rating: 5,
       verified: true,
-      text: "Veio bem embalada e já com carga. Adorei o visor digital mostrando a bateria, dá certinho pra faxina da semana toda.",
+      text: "Frete grátis chegou em 4 dias aqui em BH! Compacta, coube certinho do lado da cafeteira e gela super bem.",
       photos: []
     },
     {
       id: 7,
-      name: "Fábio Mendes",
+      name: "Lucas Mendonça",
       date: "Há 2 semanas",
       rating: 5,
       verified: true,
-      text: "Testei hoje na cozinha e tirou gordura velha ao redor do cooktop fácil fácil. Por menos de 30 reais foi um achado.",
+      text: "Comprei a 220V pro meu espaço gourmet e já usei umas 5 vezes. Produz muito gelo mesmo, valeu cada centavo.",
       photos: []
     },
     {
       id: 8,
-      name: "Larissa Rocha",
+      name: "Juliana Pires",
       date: "Há 2 semanas",
       rating: 5,
       verified: true,
-      text: "Super prática, leve e fácil de trocar as pontas. A esponja macia pra limpar vidro é ótima porque não risca nada.",
+      text: "Super fácil de usar e limpar, tem até a tampinha embaixo pra escoar a água. Recomendo de olhos fechados!",
       photos: []
     },
     {
       id: 9,
-      name: "Bruno Carvalho",
+      name: "Anderson Costa",
       date: "Há 3 semanas",
-      rating: 5,
+      rating: 4,
       verified: true,
-      text: "Chegou em 4 dias úteis em SP. Produto igualzinho ao anúncio, bem firme e com acabamento muito bom.",
+      text: "Excelente custo-benefício. Nos primeiros dois ciclos os cubos vêm menores, depois estabiliza e faz cubos bem firmes rapidinho.",
       photos: []
     },
     {
       id: 10,
-      name: "Patrícia Souza",
-      date: "Há 3 semanas",
-      rating: 5,
-      verified: true,
-      text: "Comprei uma pra mim e já vou pegar outra pra dar de presente pra minha mãe. Facilita demais a limpeza pesada.",
-      photos: []
-    },
-    {
-      id: 11,
-      name: "Eduardo Lima",
-      date: "Há 1 mês",
-      rating: 4,
-      verified: true,
-      text: "Muito boa, só demorou um dia a mais por causa dos Correios, mas a escova em si é forte e funciona direitinho.",
-      photos: []
-    },
-    {
-      id: 12,
-      name: "Vanessa Costa",
+      name: "Beatriz Azevedo",
       date: "Há 1 mês",
       rating: 5,
       verified: true,
-      text: "Não sei como fiquei tanto tempo sem isso. Limpar o piso do box nunca foi tão rápido e sem dor no braço.",
+      text: "Presenteei meu marido e ele não para de usar nos churrascos com os amigos. Entrega rápida e produto original Mondial.",
       photos: []
     }
   ];
@@ -260,44 +246,37 @@ export default function App() {
 
   const getCheckoutUrl = (url: string) => {
     const search = typeof window !== 'undefined' ? window.location.search : '';
-    if (!search) return url;
+    const cleanSearch = search.replace(/^\?+/, '');
+    if (!cleanSearch) return url;
     if (url.includes('?')) {
-      const cleanSearch = search.startsWith('?') ? search.substring(1) : search;
-      return `${url}&${cleanSearch}`;
+      return url.endsWith('?') || url.endsWith('&')
+        ? `${url}${cleanSearch}`
+        : `${url}&${cleanSearch}`;
     }
-    return `${url}${search.startsWith('?') ? search : '?' + search}`;
+    return `${url}?${cleanSearch}`;
   };
 
   const warmCheckout = () => {
     if (checkoutWarmedRef.current || typeof document === 'undefined') return;
     checkoutWarmedRef.current = true;
-    const targetUrl = getCheckoutUrl(productData.checkoutUrl);
-    const link = document.createElement('link');
-    link.rel = 'prefetch';
-    link.as = 'document';
-    link.href = targetUrl;
-    document.head.appendChild(link);
+    [productData.checkoutUrl110, productData.checkoutUrl220].forEach((rawUrl) => {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.as = 'document';
+      link.href = getCheckoutUrl(rawUrl);
+      document.head.appendChild(link);
+    });
   };
 
   useEffect(() => {
     warmCheckout();
 
-    // Primeiro garante as fotos da galeria em memória; miniaturas das avaliações carregam logo após em segundo plano
+    // Garante as demais fotos da galeria em memória rapidamente sem competir com a principal
     galleryImages.slice(1).forEach((item) => {
       const img = new Image();
       img.decoding = 'async';
       img.src = item.src;
     });
-
-    const timer = window.setTimeout(() => {
-      reviews.flatMap((r) => r.photos || []).forEach((src) => {
-        const img = new Image();
-        img.decoding = 'async';
-        img.src = src.replace('/images/r', '/images/rt');
-      });
-    }, 150);
-
-    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -356,27 +335,23 @@ export default function App() {
   }, []);
 
   const handleBuyNow = () => {
-    const targetUrl = getCheckoutUrl(productData.checkoutUrl);
-    try {
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'AddToCart', {
-          content_name: productData.name,
-          content_category: 'Casa e Limpeza',
-          value: parseFloat(productData.price.replace(',', '.')),
-          currency: 'BRL'
-        });
+    warmCheckout();
+    setVoltageError(false);
+    setIsCartOpen(false);
+    setIsVoltageModalOpen(true);
+  };
 
-        (window as any).fbq('track', 'InitiateCheckout', {
-          value: parseFloat(productData.price.replace(',', '.')),
-          currency: 'BRL',
-          num_items: 1
-        });
-      }
-    } catch {
-      // Não bloqueia redirecionamento para o checkout
+  const handleConfirmVoltageAndProceed = () => {
+    if (!selectedVoltage) {
+      setVoltageError(true);
+      return;
     }
 
-    window.location.assign(targetUrl);
+    const baseCheckoutUrl =
+      selectedVoltage === '220V' ? productData.checkoutUrl220 : productData.checkoutUrl110;
+    const targetUrl = getCheckoutUrl(baseCheckoutUrl);
+
+    window.location.href = targetUrl;
   };
 
   const handleCepLookup = async () => {
@@ -457,7 +432,11 @@ export default function App() {
               {/* Center: Logo PRIME STORE em Branco exatamente como no banner */}
               <div className="flex items-center justify-center shrink-0">
                 <a
-                  href="#"
+                  href={typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '#'}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.location.href = `${window.location.pathname}${window.location.search}`;
+                  }}
                   className="flex flex-col items-center justify-center select-none group"
                   id="brand-logo-link"
                   aria-label="PRIME STORE"
@@ -511,21 +490,21 @@ export default function App() {
             </div>
           </header>
 
-          {/* 2. Listra Pequena de Black Friday passando para o lado */}
+          {/* 2. Listra Pequena de Black Friday e Frete Grátis passando para o lado */}
           <div
             className="w-full overflow-hidden bg-[#141414] border-t border-white/15 py-1.5 select-none"
-            aria-label="Promoção Black Friday"
+            aria-label="Black Friday e Frete Grátis"
           >
             <div className="animate-bf-marquee text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-white whitespace-nowrap">
               {[...Array(6)].map((_, idx) => (
                 <div key={idx} className="flex items-center gap-4 px-4 shrink-0">
                   <span className="text-amber-400 font-black">BLACK FRIDAY</span>
                   <span className="text-white/40" aria-hidden="true">•</span>
-                  <span>ATÉ 68% OFF POR TEMPO LIMITADO</span>
+                  <span className="text-emerald-400 font-black">FRETE GRÁTIS</span>
                   <span className="text-white/40" aria-hidden="true">•</span>
-                  <span>ESCOVA ELÉTRICA 9 EM 1 POR R$ 28,97</span>
+                  <span>72% OFF POR TEMPO LIMITADO</span>
                   <span className="text-white/40" aria-hidden="true">•</span>
-                  <span className="text-emerald-400">ENVIO RÁPIDO PARA TODO BRASIL</span>
+                  <span>MÁQUINA DE GELO MONDIAL POR R$ 84,59</span>
                   <span className="text-white/40" aria-hidden="true">•</span>
                 </div>
               ))}
@@ -537,12 +516,19 @@ export default function App() {
         <main className="flex-1 container mx-auto px-4 py-4 md:py-8 max-w-7xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-neutral-500 mb-4 md:mb-6">
-            <a href="#" className="hover:text-neutral-900 transition-colors flex items-center gap-1 shrink-0">
+            <a
+              href={typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '#'}
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.href = `${window.location.pathname}${window.location.search}`;
+              }}
+              className="hover:text-neutral-900 transition-colors flex items-center gap-1 shrink-0"
+            >
               <House className="w-3.5 h-3.5" />
               <span>Início</span>
             </a>
             <ChevronRight className="w-3 h-3 text-neutral-400 shrink-0" />
-            <span className="hover:text-neutral-900 cursor-pointer shrink-0">Casa &amp; Limpeza</span>
+            <span className="hover:text-neutral-900 cursor-pointer shrink-0">Eletroportáteis</span>
             <ChevronRight className="w-3 h-3 text-neutral-400 shrink-0" />
             <span className="text-neutral-800 font-semibold truncate max-w-[200px] sm:max-w-none">
               {productData.name}
@@ -616,15 +602,15 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Thumbnails Row (ligeiramente menores) */}
-                <div ref={thumbnailsContainerRef} className="flex gap-1.5 overflow-x-auto pb-1.5">
+                {/* Todas as 7 miniaturas lado a lado sem rolagem horizontal */}
+                <div ref={thumbnailsContainerRef} className="grid grid-cols-7 gap-1 sm:gap-1.5 w-full">
                   {galleryImages.map((img, idx) => {
                     const isSelected = currentImageIndex === idx;
                     return (
                       <button
                         key={idx}
                         onClick={() => setCurrentImageIndex(idx)}
-                        className={`flex-shrink-0 w-13 h-13 md:w-16 md:h-16 aspect-square overflow-hidden border-2 transition-all duration-150 cursor-pointer rounded-md p-0.5 bg-white ${
+                        className={`w-full aspect-square overflow-hidden border-2 transition-all duration-150 cursor-pointer rounded-md p-0.5 bg-white ${
                           isSelected
                             ? 'border-black ring-1 ring-black/20 shadow-xs'
                             : 'border-neutral-200 hover:border-neutral-400 opacity-85 hover:opacity-100'
@@ -653,9 +639,9 @@ export default function App() {
                 <div className="flex items-center gap-2 text-xs font-semibold text-neutral-600 mb-2">
                   <span className="text-[#29180c] uppercase tracking-wider font-bold">Mais Vendido</span>
                   <span aria-hidden="true">·</span>
-                  <span>Envio Imediato</span>
+                  <span>Frete Grátis</span>
                   <span aria-hidden="true">·</span>
-                  <span>À Prova d&apos;Água IPX7</span>
+                  <span>110V ou 220V</span>
                 </div>
 
                 {/* Title */}
@@ -740,7 +726,7 @@ export default function App() {
                     <span>COMPRAR AGORA • R$ {productData.price}</span>
                   </button>
 
-                  {/* Expansível: O que vem no kit 9 em 1 */}
+                  {/* Expansível: Resumo da Máquina de Gelo */}
                   <div className="w-full border border-dashed border-neutral-300 rounded-xl overflow-hidden bg-neutral-50/70 transition-all">
                     <button
                       type="button"
@@ -751,7 +737,7 @@ export default function App() {
                       <span className="flex items-center gap-2">
                         <Package className="w-4 h-4 text-[#29180c] shrink-0" />
                         <span className="underline underline-offset-2 decoration-neutral-400">
-                          Ver todas as 9 ponteiras e acessórios inclusos
+                          Ver destaques e itens inclusos (MG-12-GI Mondial)
                         </span>
                       </span>
                       <span className="flex items-center gap-1 text-[11px] text-neutral-500 font-normal shrink-0">
@@ -764,57 +750,41 @@ export default function App() {
                       <div className="overflow-hidden border-t border-neutral-200 bg-white p-4 space-y-3 animate-fade-in-fast">
                         <div>
                           <h4 className="font-extrabold text-neutral-900 text-xs uppercase tracking-wider mb-2">
-                            Equipamento Principal &amp; Extensão:
+                            O que acompanha na caixa:
                           </h4>
                           <div className="space-y-1.5 text-xs">
                             <div className="p-2 rounded bg-neutral-50 border border-neutral-200/70">
-                              <span className="font-bold text-neutral-900">1. Escova Motorizada Sem Fio:</span> Motor de alto torque com 2 velocidades (300/400 RPM) e visor LED de bateria.
+                              <span className="font-bold text-neutral-900">1. Máquina de Gelo Mondial MG-12-GI:</span> Produção de até 12 kg/dia com painel digital e tampa com visor transparente.
                             </div>
                             <div className="p-2 rounded bg-neutral-50 border border-neutral-200/70">
-                              <span className="font-bold text-neutral-900">2. Cabo Extensor Telescópico Inox:</span> Ajustável de 38cm até 110cm para limpar pisos e tetos sem curvar a coluna.
+                              <span className="font-bold text-neutral-900">2. Cesto Coletor + Pá de Gelo:</span> Acessórios práticos inclusos para armazenar e servir o gelo com higiene.
                             </div>
                             <div className="p-2 rounded bg-neutral-50 border border-neutral-200/70">
-                              <span className="font-bold text-neutral-900">3. Cabo USB-C + Gancho de Parede:</span> Carregamento rápido e alça prática para guardar em qualquer cantinho.
+                              <span className="font-bold text-neutral-900">3. Manual + 1 Ano de Garantia Mondial:</span> Dispensa instalação hidráulica, basta ligar na tomada (110V ou 220V).
                             </div>
                           </div>
                         </div>
 
                         <div>
                           <h4 className="font-extrabold text-neutral-900 text-xs uppercase tracking-wider mb-2">
-                            9 Ponteiras Intercambiáveis Inclusas:
+                            Principais Diferenciais:
                           </h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-neutral-800">
                             <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Escova Plana Grande (pisos e paredes)</span>
+                              <span>9 cubos a cada 8 minutos*</span>
                             </div>
                             <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Escova Plana Média (pias e fogão)</span>
+                              <span>2 tamanhos de gelo (P e G)</span>
                             </div>
                             <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Escova Cúpula (vaso, cuba e cantos)</span>
+                              <span>Reservatório de 1,3 litros</span>
                             </div>
                             <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
                               <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Escova Pontuda (rejuntes e frestas)</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Esponja Macia (vidros e box)</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Disco Abrasivo (gordura e panelas)</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>Disco Polidor de Lã (móveis e inox)</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 p-1.5 bg-neutral-50 border border-neutral-200/70 rounded">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-[#0c8f00] shrink-0" />
-                              <span>2x Panos Microfibra (secagem e brilho)</span>
+                              <span>Não deixa marcas de dedos</span>
                             </div>
                           </div>
                         </div>
@@ -836,17 +806,17 @@ export default function App() {
                       </div>
                       <div className="flex-1 leading-tight">
                         <p className="text-xs">
-                          <span className="text-neutral-900 font-bold text-xs">Envio Expresso</span>{' '}
+                          <span className="text-neutral-900 font-bold text-xs">Frete Grátis Black Friday</span>{' '}
                           <span className="text-neutral-500 text-xs">Via Correios &amp; Transportadoras</span>
                         </p>
                         <p className="text-xs text-[#0c8f00] font-bold mt-0.5 flex items-center gap-1 flex-wrap">
-                          <span>Disponível para Todo o Brasil</span>
+                          <span>Grátis para Todo o Brasil</span>
                           <button
                             type="button"
                             onClick={() => setShowCepInput(!showCepInput)}
                             className="text-neutral-500 hover:text-neutral-800 text-[10px] font-normal underline ml-1 cursor-pointer"
                           >
-                            {showCepInput ? 'Fechar' : 'Calcular Prazo e Frete'}
+                            {showCepInput ? 'Fechar' : 'Calcular Frete e Prazo'}
                           </button>
                         </p>
                       </div>
@@ -902,12 +872,12 @@ export default function App() {
                                 <div>
                                   <p className="font-extrabold text-emerald-900 text-xs flex items-center gap-1.5">
                                     <Truck className="w-3.5 h-3.5 text-emerald-600" />
-                                    <span>Envio Econômico (Correios)</span>
+                                    <span>Frete Grátis</span>
                                   </p>
-                                  <p className="text-[10px] text-emerald-700">Prazo de 7 a 10 dias úteis</p>
+                                  <p className="text-[10px] text-emerald-700">Prazo estimado de 7 a 10 dias</p>
                                 </div>
-                                <span className="text-xs font-black text-emerald-950 bg-emerald-100/90 px-2 py-0.5 rounded tabular-nums">
-                                  R$ 8,56
+                                <span className="text-xs font-black text-emerald-950 bg-emerald-100/90 px-2 py-0.5 rounded uppercase">
+                                  Grátis
                                 </span>
                               </div>
 
@@ -915,12 +885,12 @@ export default function App() {
                                 <div>
                                   <p className="font-extrabold text-amber-950 text-xs flex items-center gap-1.5">
                                     <Zap className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
-                                    <span>Envio Sedex Full Prioritário</span>
+                                    <span>Frete Full</span>
                                   </p>
-                                  <p className="text-[10px] text-amber-800">Despacho Imediato • 2 a 4 dias úteis</p>
+                                  <p className="text-[10px] text-amber-800">Prazo estimado de 2 a 3 dias</p>
                                 </div>
                                 <span className="text-xs font-black text-amber-950 bg-amber-200/80 px-2 py-0.5 rounded tabular-nums">
-                                  R$ 12,41
+                                  R$ 12,43
                                 </span>
                               </div>
                             </div>
@@ -994,9 +964,9 @@ export default function App() {
                     </button>
                     {activeAccordion === 'trocas' && (
                       <div className="pb-3.5 text-xs text-neutral-600 leading-relaxed space-y-1.5">
-                        <p>• <strong>Teste sem Risco por 7 Dias:</strong> Se não gostar do desempenho, devolvemos 100% do seu dinheiro.</p>
-                        <p>• <strong>Garantia de 30 Dias:</strong> Troca imediata sem burocracia contra qualquer defeito de fabricação ou avaria no transporte.</p>
-                        <p>• <strong>Suporte Direto:</strong> Atendimento humanizado de segunda a sábado para tirar qualquer dúvida sobre uso e carregamento.</p>
+                        <p>• <strong>1 Ano de Garantia Mondial:</strong> Produto original com garantia de fábrica e nota fiscal.</p>
+                        <p>• <strong>Troca Fácil em 30 Dias:</strong> Suporte rápido contra qualquer defeito ou avaria no transporte.</p>
+                        <p>• <strong>Atendimento Humanizado:</strong> Suporte de segunda a sábado para dúvidas de voltagem e funcionamento.</p>
                       </div>
                     )}
                   </div>
@@ -1011,7 +981,7 @@ export default function App() {
                     >
                       <span className="flex items-center gap-2.5">
                         <Sparkles className="w-4 h-4 text-neutral-500 group-hover:text-neutral-800 transition-colors" />
-                        <span>O que vem na Caixa (Kit 9 em 1 Completo)</span>
+                        <span>O que vem na Caixa (MG-12-GI Mondial)</span>
                       </span>
                       <span className="relative flex items-center justify-center w-5 h-5 text-neutral-400 group-hover:text-neutral-800 transition-transform">
                         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${activeAccordion === 'conteudo' ? 'rotate-180' : ''}`} />
@@ -1019,17 +989,16 @@ export default function App() {
                     </button>
                     {activeAccordion === 'conteudo' && (
                       <div className="pb-3.5 text-xs text-neutral-600 leading-relaxed space-y-1">
-                        <p>• 1x <strong>Escova Elétrica Giratória Sem Fio</strong> (com visor LED digital)</p>
-                        <p>• 1x <strong>Cabo Extensor Telescópico</strong> em aço inox (ajustável até 110cm)</p>
-                        <p>• 9x <strong>Ponteiras Intercambiáveis</strong> (4 escovas de nylon + 5 discos esponja/abrasivo/lã/microfibra)</p>
-                        <p>• 1x <strong>Base Adaptadora c/ Velcro</strong> de troca rápida</p>
-                        <p>• 1x <strong>Cabo Carregador USB-C</strong> + Manual em Português</p>
+                        <p>• 1x <strong>Máquina de Gelo Turbo Ice Premium Mondial</strong> (110V ou 220V à escolha)</p>
+                        <p>• 1x <strong>Cesto Coletor de Gelo</strong> removível</p>
+                        <p>• 1x <strong>Pá Coletora</strong> para servir com praticidade</p>
+                        <p>• 1x <strong>Manual de Instruções</strong> em Português + Certificado de Garantia</p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Descrição do Produto */}
+                {/* Descrição do Produto (Resumida) */}
                 <div className="pt-5 border-t border-neutral-200" id="descricao-produto">
                   <h2 className="flex items-center gap-2 text-sm md:text-base font-bold text-neutral-900 mb-3 tracking-wide">
                     <FileText className="w-4 h-4 text-neutral-700" />
@@ -1038,24 +1007,23 @@ export default function App() {
 
                   <div className="text-neutral-700 leading-relaxed text-xs md:text-sm space-y-4">
                     <p className="text-neutral-800 font-medium text-sm md:text-base">
-                      Chega de dores nas costas, mãos ressecadas e horas esfregando sujeira pesada. A{' '}
-                      <strong>Escova Elétrica Giratória 9 em 1 PRIME STORE</strong> faz todo o trabalho pesado por você em metade do tempo, com motor de alto torque que não trava ao pressionar.
+                      A <strong>Máquina de Gelo Turbo Ice Premium Mondial (MG-12-GI)</strong> traz praticidade e sofisticação para deixar drinks e bebidas sempre gelados no churrasco, almoço em família ou rotina diária.
                     </p>
 
                     <p className="text-neutral-600 text-xs md:text-sm leading-relaxed">
-                      Equipada com <strong>cabo extensor telescópico de até 110cm</strong> e <strong>9 cabeças intercambiáveis</strong>, ela alcança do rejunte do piso ao vidro alto do box, limpando banheiro, cozinha, estofados, janelas e até rodas do carro com praticidade total e sem fios atrapalhando.
+                      Compacta, portátil e sem complicações: <strong>dispensa instalação hidráulica</strong> — basta ligar na tomada, colocar água no reservatório e acompanhar tudo pela tampa com visor transparente.
                     </p>
 
                     {/* 4 Feature Cards (2x2 Grid) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
                       <div className="flex items-start gap-2.5 p-3 rounded-lg bg-neutral-50 border border-neutral-200">
                         <div className="w-7 h-7 rounded-lg bg-neutral-900 text-white flex items-center justify-center shrink-0 mt-0.5">
-                          <Gauge className="w-4 h-4" />
+                          <Snowflake className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Motor Turbo 400 RPM</h4>
+                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Até 12 kg por Dia</h4>
                           <p className="text-neutral-600 text-[11px] md:text-xs mt-0.5">
-                            2 velocidades ajustáveis que removem limo, sabão seco e gordura incrustada sem exigir força nos braços.
+                            Produção rápida de 9 cubos a cada ciclo de 8 minutos*, com opção de cubos pequenos ou grandes.
                           </p>
                         </div>
                       </div>
@@ -1065,21 +1033,21 @@ export default function App() {
                           <Droplets className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">À Prova d&apos;Água IPX7</h4>
+                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Reservatório 1,3L + Escoamento</h4>
                           <p className="text-neutral-600 text-[11px] md:text-xs mt-0.5">
-                            Corpo totalmente vedado para usar com água, detergente e espuma direto no box, pia ou área externa.
+                            Sem encanamento: adicione água facilmente e conte com válvula prática para saída de água.
                           </p>
                         </div>
                       </div>
 
                       <div className="flex items-start gap-2.5 p-3 rounded-lg bg-neutral-50 border border-neutral-200">
                         <div className="w-7 h-7 rounded-lg bg-amber-600 text-white flex items-center justify-center shrink-0 mt-0.5">
-                          <BatteryCharging className="w-4 h-4" />
+                          <Gauge className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Bateria Longa Duração + LED</h4>
+                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Painel Digital + Visor Transparente</h4>
                           <p className="text-neutral-600 text-[11px] md:text-xs mt-0.5">
-                            Bateria de 2500mAh com visor digital em tempo real, garantindo até 90 minutos contínuos via USB-C.
+                            Operação intuitiva com aviso luminoso para repor água ou esvaziar o cesto sem precisar abrir a tampa.
                           </p>
                         </div>
                       </div>
@@ -1089,9 +1057,9 @@ export default function App() {
                           <Sparkles className="w-4 h-4" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">9 Ponteiras p/ Cada Superfície</h4>
+                          <h4 className="font-bold text-neutral-900 text-xs md:text-sm">Acabamento Premium Anti-Marcas</h4>
                           <p className="text-neutral-600 text-[11px] md:text-xs mt-0.5">
-                            Inclui cerdas para rejunte, esponja anti-risco para vidros, disco abrasivo para panelas e polidor de lã.
+                            Visual sofisticado que não deixa marcas visíveis de dedos e já acompanha cesto e pá coletora.
                           </p>
                         </div>
                       </div>
@@ -1101,29 +1069,29 @@ export default function App() {
                     <div className="space-y-3 pt-2">
                       <div className="rounded-lg overflow-hidden border border-neutral-200 shadow-2xs">
                         <img
-                          alt="Escova Elétrica 9 em 1 - Detalhes do Produto"
+                          alt="Máquina de Gelo Mondial - Cesto e Pá Coletora"
                           className="w-full h-auto object-cover rounded-lg block"
                           loading="lazy"
                           decoding="async"
-                          src="/images/p2.webp"
+                          src="/images/ice2.webp"
                         />
                       </div>
                       <div className="rounded-lg overflow-hidden border border-neutral-200 shadow-2xs">
                         <img
-                          alt="Escova Elétrica 9 em 1 - Uso Prático"
+                          alt="Máquina de Gelo Mondial - Painel Digital e Visor"
                           className="w-full h-auto object-cover rounded-lg block"
                           loading="lazy"
                           decoding="async"
-                          src="/images/p3.webp"
+                          src="/images/ice3.webp"
                         />
                       </div>
                       <div className="rounded-lg overflow-hidden border border-neutral-200 shadow-2xs">
                         <img
-                          alt="Escova Elétrica 9 em 1 - Cabo Extensor e Ponteiras"
+                          alt="Máquina de Gelo Mondial - Portátil para Cozinha e Eventos"
                           className="w-full h-auto object-cover rounded-lg block"
                           loading="lazy"
                           decoding="async"
-                          src="/images/p4.webp"
+                          src="/images/ice4.webp"
                         />
                       </div>
                     </div>
@@ -1133,30 +1101,33 @@ export default function App() {
                       <h3 className="font-bold text-neutral-900 text-sm md:text-base mb-3">Especificações Técnicas</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs tabular-nums">
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Ponteiras Inclusas:</span>
-                          <span className="font-semibold text-neutral-900">9 Cabeças Intercambiáveis</span>
+                          <span className="text-neutral-500">Modelo / Marca:</span>
+                          <span className="font-semibold text-neutral-900">MG-12-GI Mondial</span>
                         </div>
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Velocidades:</span>
-                          <span className="font-semibold text-neutral-900">2 Níveis (300 / 400 RPM)</span>
+                          <span className="text-neutral-500">Capacidade Diária:</span>
+                          <span className="font-semibold text-neutral-900">Até 12 kg / dia</span>
                         </div>
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Bateria &amp; Autonomia:</span>
-                          <span className="font-semibold text-neutral-900">2500mAh (até 90 min)</span>
+                          <span className="text-neutral-500">Ciclo Rápido:</span>
+                          <span className="font-semibold text-neutral-900">9 cubos em ~8 minutos*</span>
                         </div>
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Carregamento:</span>
-                          <span className="font-semibold text-neutral-900">USB-C Bivolt (cabo incluso)</span>
+                          <span className="text-neutral-500">Tamanhos de Gelo:</span>
+                          <span className="font-semibold text-neutral-900">2 opções (Pequeno / Grande)</span>
                         </div>
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Proteção contra Água:</span>
-                          <span className="font-semibold text-neutral-900">Certificação IPX7</span>
+                          <span className="text-neutral-500">Reservatório de Água:</span>
+                          <span className="font-semibold text-neutral-900">1,3 Litros</span>
                         </div>
                         <div className="flex justify-between p-2.5 bg-neutral-50 rounded border border-neutral-100">
-                          <span className="text-neutral-500">Comprimento do Cabo:</span>
-                          <span className="font-semibold text-neutral-900">Ajustável de 38cm a 110cm</span>
+                          <span className="text-neutral-500">Voltagem &amp; Garantia:</span>
+                          <span className="font-semibold text-neutral-900">110V ou 220V • 1 Ano</span>
                         </div>
                       </div>
+                      <p className="text-[11px] text-neutral-400 mt-2">
+                        *O tempo de preparo pode variar conforme a temperatura ambiente e da água.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -1253,11 +1224,21 @@ export default function App() {
                         >
                           <div>
                             <div className="flex items-start gap-2.5 mb-2">
-                              <div
-                                className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border shadow-2xs shrink-0 select-none ${getAvatarBg(rev.id)}`}
-                              >
-                                {getInitials(rev.name)}
-                              </div>
+                              {rev.avatar ? (
+                                <img
+                                  src={rev.avatar}
+                                  alt={rev.name}
+                                  className="w-9 h-9 rounded-full object-cover border border-neutral-200 shadow-2xs shrink-0"
+                                  loading="lazy"
+                                  decoding="async"
+                                />
+                              ) : (
+                                <div
+                                  className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border shadow-2xs shrink-0 select-none ${getAvatarBg(rev.id)}`}
+                                >
+                                  {getInitials(rev.name)}
+                                </div>
+                              )}
 
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-1">
@@ -1302,7 +1283,7 @@ export default function App() {
                                     className="w-14 h-14 rounded-md overflow-hidden border border-neutral-200 flex-shrink-0 cursor-zoom-in hover:border-neutral-900 transition-all bg-neutral-50"
                                   >
                                     <img
-                                      src={p.replace('/images/r', '/images/rt')}
+                                      src={p.replace('/images/rev', '/images/revt')}
                                       alt={`Foto enviada por ${rev.name}`}
                                       className="w-full h-full object-cover"
                                       loading="lazy"
@@ -1362,9 +1343,9 @@ export default function App() {
                 >
                   <Truck className="w-7 h-7" />
                 </div>
-                <h3 className="text-sm font-bold text-neutral-900">Envio Rápido para todo o Brasil</h3>
+                <h3 className="text-sm font-bold text-neutral-900">Frete Grátis para todo o Brasil</h3>
                 <p className="mt-1.5 text-xs text-neutral-600 max-w-xs leading-relaxed">
-                  Despacho rápido em até 24 horas com rastreamento em tempo real dos Correios e Transportadoras.
+                  Frete Grátis Black Friday com envio rápido e rastreamento oficial em tempo real.
                 </p>
               </div>
 
@@ -1375,9 +1356,9 @@ export default function App() {
                 >
                   <ShieldCheck className="w-7 h-7" />
                 </div>
-                <h3 className="text-sm font-bold text-neutral-900">Compra 100% Protegida</h3>
+                <h3 className="text-sm font-bold text-neutral-900">1 Ano de Garantia Mondial</h3>
                 <p className="mt-1.5 text-xs text-neutral-600 max-w-xs leading-relaxed">
-                  Garantia de 30 dias contra defeito ou avaria no transporte, com troca ou reembolso sem burocracia.
+                  Produto original com garantia de 1 ano Mondial e troca protegida contra avarias no transporte.
                 </p>
               </div>
             </div>
@@ -1409,9 +1390,9 @@ export default function App() {
                     >
                       <Truck className="w-6 h-6" />
                     </div>
-                    <h3 className="text-sm font-bold text-neutral-900">Envio Rápido para todo o Brasil</h3>
+                    <h3 className="text-sm font-bold text-neutral-900">Frete Grátis para todo o Brasil</h3>
                     <p className="mt-1 text-xs text-neutral-600 leading-relaxed max-w-xs">
-                      Despacho rápido em até 24 horas com rastreamento em tempo real dos Correios e Transportadoras.
+                      Frete Grátis Black Friday com envio rápido e rastreamento oficial em tempo real.
                     </p>
                   </div>
 
@@ -1422,9 +1403,9 @@ export default function App() {
                     >
                       <ShieldCheck className="w-6 h-6" />
                     </div>
-                    <h3 className="text-sm font-bold text-neutral-900">Compra 100% Protegida</h3>
+                    <h3 className="text-sm font-bold text-neutral-900">1 Ano de Garantia Mondial</h3>
                     <p className="mt-1 text-xs text-neutral-600 leading-relaxed max-w-xs">
-                      Garantia de 30 dias contra defeito ou avaria no transporte, com troca ou reembolso sem burocracia.
+                      Produto original com garantia de 1 ano Mondial e troca protegida contra avarias no transporte.
                     </p>
                   </div>
                 </div>
@@ -1581,12 +1562,12 @@ export default function App() {
                 <button onClick={() => alert('Política de Privacidade - PRIME STORE')} className="hover:opacity-100 hover:underline cursor-pointer text-left">Política de Privacidade</button>
                 <button onClick={() => alert('Política de Entrega - Despacho em até 24h')} className="hover:opacity-100 hover:underline cursor-pointer text-left">Política de Entrega</button>
                 <button onClick={() => alert('Trocas e Devoluções - Garantia de 30 dias')} className="hover:opacity-100 hover:underline cursor-pointer text-left">Trocas e Devoluções</button>
-                <button onClick={() => alert('Perguntas Frequentes - Escova Elétrica 9 em 1')} className="hover:opacity-100 hover:underline cursor-pointer text-left">Perguntas Frequentes</button>
+                <button onClick={() => alert('Perguntas Frequentes - Máquina de Gelo Turbo Ice Premium Mondial')} className="hover:opacity-100 hover:underline cursor-pointer text-left">Perguntas Frequentes</button>
               </nav>
             </div>
 
             <div className="border-t mt-6 pt-6 text-center text-[11px] opacity-60 leading-relaxed" style={{ borderColor: 'rgba(250, 248, 245, 0.15)' }}>
-              © 2025 PRIME STORE - Todos os Direitos Reservados • Utilidades Domésticas &amp; Casa Inteligente • São Paulo, SP
+              © 2025 PRIME STORE - Todos os Direitos Reservados • Eletroportáteis &amp; Casa Inteligente • São Paulo, SP
             </div>
           </div>
         </footer>
@@ -1600,15 +1581,15 @@ export default function App() {
           <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between gap-2.5 sm:gap-4 max-w-5xl">
             <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
               <img
-                src="/images/t1.webp"
-                alt="Escova Elétrica 9 em 1"
+                src="/images/icet1.webp"
+                alt="Máquina de Gelo Turbo Ice Premium Mondial"
                 loading="eager"
                 decoding="async"
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain bg-neutral-50 rounded-lg border border-neutral-200 p-0.5 shrink-0"
               />
               <div className="flex flex-col justify-center min-w-0">
                 <span className="font-bold text-[11px] sm:text-sm text-neutral-900 truncate leading-tight">
-                  Escova Elétrica 9 em 1<span className="hidden sm:inline"> Giratória Sem Fio</span>
+                  Máquina de Gelo Mondial<span className="hidden sm:inline"> Turbo Ice Premium</span>
                 </span>
                 <div className="flex items-center gap-1.5 mt-1 flex-nowrap">
                   <span className="font-black text-[15px] sm:text-lg text-neutral-950 tracking-tight tabular-nums leading-none whitespace-nowrap">
@@ -1620,7 +1601,7 @@ export default function App() {
                   <span className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-neutral-500 leading-none whitespace-nowrap shrink-0">
                     <span aria-hidden="true">•</span>
                     <Truck className="w-3.5 h-3.5 text-[#0c8f00]" />
-                    <span>Envio Rápido</span>
+                    <span>Frete Grátis</span>
                   </span>
                 </div>
               </div>
@@ -1674,7 +1655,7 @@ export default function App() {
 
           <div className="bg-emerald-50 px-4 py-2.5 border-b border-emerald-100 flex items-center gap-2 text-xs text-emerald-800 font-semibold">
             <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Envio Seguro com Rastreamento em Tempo Real</span>
+            <span>Frete Grátis Black Friday com Rastreamento</span>
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 py-4 divide-y divide-neutral-100">
@@ -1682,15 +1663,15 @@ export default function App() {
               <div className="h-full flex flex-col items-center justify-center text-center text-neutral-400 py-12">
                 <ShoppingBag className="w-16 h-16 mb-3 opacity-30 text-neutral-600" />
                 <p className="text-sm font-semibold text-neutral-600">Seu carrinho está vazio</p>
-                <p className="text-xs text-neutral-400 mt-1 max-w-[220px]">
-                  Clique no botão &quot;Comprar Agora&quot; para garantir sua Escova Elétrica 9 em 1 por R$ {productData.price}.
+                <p className="text-xs text-neutral-400 mt-1 max-w-[240px]">
+                  Clique em &quot;Comprar Agora&quot; para escolher a voltagem (110V ou 220V) e garantir sua Máquina de Gelo Mondial por R$ {productData.price}.
                 </p>
               </div>
             ) : (
               <div className="py-3 flex gap-3 items-center">
                 <img
-                  src="/images/t1.webp"
-                  alt="Escova Elétrica 9 em 1"
+                  src="/images/icet1.webp"
+                  alt="Máquina de Gelo Turbo Ice Premium Mondial"
                   loading="eager"
                   decoding="async"
                   className="w-16 h-16 object-cover border border-neutral-200 rounded"
@@ -1699,7 +1680,9 @@ export default function App() {
                   <h4 className="text-xs font-bold text-neutral-900 leading-tight">
                     {productData.name}
                   </h4>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">Cabo Extensor + 9 Ponteiras + USB-C</p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">
+                    Modelo MG-12-GI {selectedVoltage ? `• ${selectedVoltage}` : '• Escolha 110V ou 220V'}
+                  </p>
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-sm font-extrabold text-neutral-900 tabular-nums">R$ {productData.price}</span>
                     <button
@@ -1738,7 +1721,162 @@ export default function App() {
           </div>
         </aside>
 
-        {/* 8. Zoom Modal for Customer Review Photos */}
+        {/* 8. Voltage Selection Modal (110V or 220V) */}
+        {isVoltageModalOpen && (
+          <div
+            className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in-fast"
+            onClick={() => setIsVoltageModalOpen(false)}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="voltage-modal-title"
+          >
+            <div
+              className="w-full sm:max-w-md bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden animate-zoom-in-fast"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 bg-neutral-50">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center shrink-0">
+                    <Plug className="w-4 h-4 text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 id="voltage-modal-title" className="text-sm sm:text-base font-extrabold text-neutral-900 leading-tight">
+                      Escolha a Voltagem
+                    </h3>
+                    <p className="text-[11px] text-neutral-500">Selecione antes de ir para o pagamento</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsVoltageModalOpen(false)}
+                  aria-label="Fechar seleção de voltagem"
+                  className="p-1.5 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200/70 rounded-lg transition-colors cursor-pointer"
+                  id="btn-close-voltage-modal"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="p-5 space-y-4">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-neutral-50 border border-neutral-200/80">
+                  <img
+                    src="/images/icet1.webp"
+                    alt={productData.name}
+                    className="w-14 h-14 object-contain bg-white rounded-lg border border-neutral-200 p-1 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-neutral-900 line-clamp-2 leading-snug">
+                      {productData.name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-base font-black text-neutral-950 tabular-nums">
+                        R$ {productData.price}
+                      </span>
+                      <span className="text-[10px] font-extrabold text-[#0c8f00] bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded uppercase">
+                        Frete Grátis
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs font-bold text-neutral-800 uppercase tracking-wider mb-2.5">
+                    Voltagem da tomada na sua casa:
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedVoltage('110V');
+                        setVoltageError(false);
+                      }}
+                      aria-pressed={selectedVoltage === '110V'}
+                      id="btn-voltage-110"
+                      className={`relative p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                        selectedVoltage === '110V'
+                          ? 'border-[#0c8f00] bg-emerald-50/70 shadow-sm'
+                          : 'border-neutral-200 bg-white hover:border-neutral-400'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-lg font-black text-neutral-950 tabular-nums">110V</span>
+                        <span
+                          className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                            selectedVoltage === '110V'
+                              ? 'bg-[#0c8f00] border-[#0c8f00] text-white'
+                              : 'border-neutral-300 bg-white'
+                          }`}
+                        >
+                          {selectedVoltage === '110V' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-neutral-600 leading-tight">
+                        Padrão 110V / 127V
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedVoltage('220V');
+                        setVoltageError(false);
+                      }}
+                      aria-pressed={selectedVoltage === '220V'}
+                      id="btn-voltage-220"
+                      className={`relative p-4 rounded-xl border-2 text-left transition-all cursor-pointer ${
+                        selectedVoltage === '220V'
+                          ? 'border-[#0c8f00] bg-emerald-50/70 shadow-sm'
+                          : 'border-neutral-200 bg-white hover:border-neutral-400'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-lg font-black text-neutral-950 tabular-nums">220V</span>
+                        <span
+                          className={`w-5 h-5 rounded-full flex items-center justify-center border ${
+                            selectedVoltage === '220V'
+                              ? 'bg-[#0c8f00] border-[#0c8f00] text-white'
+                              : 'border-neutral-300 bg-white'
+                          }`}
+                        >
+                          {selectedVoltage === '220V' && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-neutral-600 leading-tight">
+                        Tomada 220V
+                      </p>
+                    </button>
+                  </div>
+
+                  {voltageError && (
+                    <p className="text-xs font-bold text-red-600 mt-2">
+                      Selecione 110V ou 220V acima para continuar.
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleConfirmVoltageAndProceed}
+                  id="btn-confirm-voltage-checkout"
+                  className={`w-full py-4 rounded-xl font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer ${
+                    selectedVoltage
+                      ? 'bg-[#0c8f00] hover:bg-[#0a7a00] text-white active:scale-[0.99]'
+                      : 'bg-neutral-900 hover:bg-neutral-800 text-white'
+                  }`}
+                >
+                  <span>
+                    {selectedVoltage
+                      ? `CONTINUAR (${selectedVoltage}) • R$ ${productData.price}`
+                      : 'ESCOLHA A VOLTAGEM ACIMA'}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 9. Zoom Modal for Customer Review Photos */}
         {selectedReviewImage && (
           <div
             className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-fast"
@@ -1755,7 +1893,6 @@ export default function App() {
               alt="Foto ampliada da avaliação"
               className="max-w-full max-h-[85vh] rounded-xl shadow-2xl object-contain animate-zoom-in-fast"
               onClick={(e) => e.stopPropagation()}
-              referrerPolicy="no-referrer"
             />
           </div>
         )}
