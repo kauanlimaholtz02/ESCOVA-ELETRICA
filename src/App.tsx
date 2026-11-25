@@ -530,7 +530,7 @@ export default function App() {
             <ChevronRight className="w-3 h-3 text-neutral-400 shrink-0" />
             <span className="hover:text-neutral-900 cursor-pointer shrink-0">Eletroportáteis</span>
             <ChevronRight className="w-3 h-3 text-neutral-400 shrink-0" />
-            <span className="text-neutral-800 font-semibold truncate max-w-[200px] sm:max-w-none">
+            <span className="text-neutral-800 font-semibold truncate flex-1 min-w-0 sm:flex-initial">
               {productData.name}
             </span>
           </nav>
@@ -645,7 +645,7 @@ export default function App() {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-xl md:text-2xl font-extrabold mb-2.5 leading-snug text-neutral-900 [text-wrap:balance]">
+                <h1 className="text-xl md:text-2xl font-extrabold mb-2.5 leading-snug tracking-[-0.025em] sm:tracking-normal text-neutral-900">
                   {productData.name}
                 </h1>
 
