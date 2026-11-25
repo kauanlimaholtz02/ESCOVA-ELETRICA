@@ -645,7 +645,7 @@ export default function App() {
                 </div>
 
                 {/* Title */}
-                <h1 className="text-xl md:text-2xl font-extrabold mb-2.5 leading-snug tracking-[-0.025em] sm:tracking-normal text-neutral-900">
+                <h1 className="text-[22px] md:text-[26px] font-extrabold mb-2.5 leading-snug tracking-[-0.025em] sm:tracking-normal text-neutral-900">
                   {productData.name}
                 </h1>
 
